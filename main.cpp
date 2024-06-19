@@ -1,22 +1,16 @@
 #include "game.hpp"
 
+Game *game = nullptr;
+
 int main(int argc, char** argv){
-    Game game = Game();
+    game = new Game();
+    game->init("Cemetery Outburst", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 800, 600, false);
 
-    game.init();
-    game.loadMedia();
-
-    while(game.getRuntime()){
-        SDL_Event event;
-        while(SDL_PollEvent(&event)){
-            switch(event.type){
-                case SDL_QUIT:
-                    game.setRuntime();
-                    break;
-                default:
-                    break;
-            }
-        }
+    while(game->running()){
+        game->handleEvents();
+        game->update();
+        game->render();
     }
-    return 0;
+
+    game->clean();
 }

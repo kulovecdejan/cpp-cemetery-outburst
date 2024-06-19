@@ -1,50 +1,77 @@
 #include "game.hpp"
 
-#define SCREEN_WIDTH 1280
-#define SCREEN_HEIGHT 720
+Game::Game(){
 
-void Game::init(){
-    if(SDL_Init(SDL_INIT_VIDEO) < 0){
-        printf("Error: SDL failed to initialize\nSDL Error: '%s'\n", SDL_GetError());
-    }
-
-    window = SDL_CreateWindow("Game", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, 0);
-    if(!window){
-        printf("Error: Failed to open window\nSDL Error: '%s'\n", SDL_GetError());
-    }
-
-    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
-    if(!renderer){
-        printf("Error: Failed to crearte renderer\nSDL Error: '%s'\n", SDL_GetError());
-    }
-
-    SDL_SetRenderDrawColor(renderer, 255, 255, 0, 0);
-    SDL_RenderClear(renderer);
-    SDL_RenderPresent(renderer);
 }
 
-bool Game::loadMedia(){
-    gHelloWorld = SDL_LoadBMP("preview.png");
+Game::~Game(){
 
-    if (gHelloWorld == NULL)
+}
+
+void Game::init(const char *title, int xPos, int yPos, int width, int height, bool fullscreen){   
+    int flags = 0;
+    if(fullscreen == true){
+        flags = SDL_WINDOW_FULLSCREEN;
+    }
+    
+    if (SDL_Init(SDL_INIT_EVERYTHING)!= 0){
+        std::cerr << "ERROR: could not initialize SDL!" << std::endl;
+        return;
+    }
+
+    gWindow = SDL_CreateWindow(title, xPos, yPos, width, height, flags);
+
+    if(!gWindow){
+        std::cerr << "ERROR: could not initialize the window!" << std::endl;
+        SDL_Quit();
+        return;
+    }
+
+    gRenderer = SDL_CreateRenderer(gWindow, -1, 0);
+
+    if(!gRenderer){
+        std::cerr << "ERROR: could not initialize the renderer!" << std::endl;
+        SDL_DestroyWindow(gWindow);
+        SDL_Quit();
+        return;
+    }
+
+    SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 0);
+    isRunning = true;
+}
+
+void Game::update(){
+
+}
+
+void Game::render(){
+    SDL_RenderClear(gRenderer);
+    SDL_RenderPresent(gRenderer);
+}
+
+void Game::handleEvents(){
+    SDL_Event event;
+    SDL_PollEvent(&event);
+
+    switch (event.type)
     {
-        printf("Error: Failed to renderer the image\nSDL Error: '%s'\n", SDL_GetError());
-        return false;
+    case SDL_QUIT:
+        isRunning = false;
+        break;
+    
+    default:
+        break;
     }
-    SDL_BlitSurface( gHelloWorld, NULL, gScreenSurface, NULL );
-    return true;
 }
 
-void Game::close(){
+void Game::clean(){
     SDL_DestroyWindow(gWindow);
-    gWindow = NULL;
+    SDL_DestroyRenderer(gRenderer);
     SDL_Quit();
+
+    std::cout << "SUCCESS: Game successfully cleaned!" << std::endl;
 }
 
-void Game::setRuntime(){
-    gRuntime = !gRuntime;
-}
-
-bool Game::getRuntime(){
-    return gRuntime;
+bool Game::running(){
+    return isRunning;
 }
