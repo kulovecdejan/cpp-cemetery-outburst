@@ -1,0 +1,18 @@
+{
+    "textures": "path-to-atlas",
+    "sounds": {
+        "sound1": "path-to-sound1",
+        "sound2": "path-to-sound2",
+        "sound3": "path-to-sound3"
+    },
+    "music": {
+        "music1": "path-to-music1",
+        "music2": "path-to-music2",
+        "music3": "path-to-music3"
+    },
+    "fonts": {
+        "font1": "path-to-font1",
+        "font2": "path-to-font2",
+        "font3": "path-to-font3"
+    }
+}
